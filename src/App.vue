@@ -1,6 +1,7 @@
 <template>
   <div>
     <button>Fetch</button>
+    <v-btn>Fetch</v-btn>
   </div>
   <bar_chart :chartData="testData"></bar_chart>
 </template>
