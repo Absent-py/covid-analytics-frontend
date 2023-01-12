@@ -1,7 +1,7 @@
 <template>
-  <v-container>
-    <v-container>
-      <v-card width="100%" align="center" dark>
+  <section class="section">
+    <v-container theme="dark">
+      <v-card width="100%" align="center" theme="dark">
         <v-container>
           <h1>Covid Analytics</h1>
           <v-container align="start">
@@ -33,16 +33,32 @@
         </v-container>
       </v-card>
     </v-container>
+  </section>
+  <section class="section">
     <v-container v-if="response !== ''">
-      <v-data-table
-          :headers="headers()"
-          :items="response"
-          :items-per-page="10"
-          dark
-      ></v-data-table>
+      <v-table theme="dark" density="compact">
+        <thead>
+        <tr>
+          <th
+              v-for="header in headers()"
+          >{{ header.text }}</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr
+            v-for="row in response"
+        >
+          <td
+              v-for="col in row"
+          >{{ col }}</td>
+        </tr>
+        </tbody>
+      </v-table>
     </v-container>
-  </v-container>
-  <bar_chart :chartData="testData"></bar_chart>
+  </section>
+  <section class="section">
+    <bar_chart :chartData="testData"></bar_chart>
+  </section>
 </template>
 
 <script>
@@ -64,14 +80,14 @@ export default {
         }
       ]
     },
-    selectedTable: 'Cases',
+    selectedTable: 'Activity',
     tables: [
       'Cases',
       'Activity',
       'Country',
       'Resist',
     ],
-    limit: 10,
+    limit: 5,
     query: '',
     response: '',
     headersResist: [
@@ -260,3 +276,9 @@ export default {
   }
 }
 </script>
+
+<style>
+.section{
+  margin-bottom: 50px;
+}
+</style>
