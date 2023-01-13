@@ -57,9 +57,13 @@
     </v-container>
   </section>
   <section class="section">
-    <v-btn @click="getChartData">Death statistics</v-btn>
+    <v-btn @click="getDeathData">Death statistics</v-btn>
     <BarChart :chartData="chartDataDeath"></BarChart>
     <BarChart :chartData="chartDataDeathDiff"></BarChart>
+  </section>
+  <section class="section">
+    <v-btn @click="getPositiveCasesData">Cases statistics</v-btn>
+    <BarChart :chartData="chartDataCases"></BarChart>
   </section>
 </template>
 
@@ -84,6 +88,12 @@ export default {
       }]
     },
     chartDataDeathDiff: {
+      labels: Array,
+      datasets: [{
+        data: Array
+      }]
+    },
+    chartDataCases: {
       labels: Array,
       datasets: [{
         data: Array
@@ -290,8 +300,11 @@ export default {
       const response = await axios.get('http://127.0.0.1:5000/death/diff')
       return response.data
     },
-    async getChartData() {
-      console.log('working')
+    async fetchCases() {
+      const response = await axios.get('http://127.0.0.1:5000/positive_cases')
+      return response.data
+    },
+    async getDeathData() {
       let response = await this.fetchDeath()
       let chartData = {
         labels: response,
@@ -309,6 +322,16 @@ export default {
         }]
       }
       this.chartDataDeathDiff = chartData
+    },
+    async getPositiveCasesData() {
+      let response = await this.fetchCases()
+      let chartData = {
+        labels: response,
+        datasets: [{
+          data: response
+        }]
+      }
+      this.chartDataCases = chartData
     },
     async forceRerender() {
       this.renderComponent = false;
