@@ -65,6 +65,13 @@
     <v-btn @click="getPositiveCasesData">Cases statistics</v-btn>
     <BarChart :chartData="chartDataCases"></BarChart>
   </section>
+  <section class="section">
+    <v-btn @click="getResistanceData">Resistance statistics</v-btn>
+    <BarChart :chartData="chartDataResistance1"></BarChart>
+    <BarChart :chartData="chartDataResistance2"></BarChart>
+    <BarChart :chartData="chartDataResistance3"></BarChart>
+    <BarChart :chartData="chartDataResistance4"></BarChart>
+  </section>
 </template>
 
 <script>
@@ -94,6 +101,30 @@ export default {
       }]
     },
     chartDataCases: {
+      labels: Array,
+      datasets: [{
+        data: Array
+      }]
+    },
+    chartDataResistance1: {
+      labels: Array,
+      datasets: [{
+        data: Array
+      }]
+    },
+    chartDataResistance2: {
+      labels: Array,
+      datasets: [{
+        data: Array
+      }]
+    },
+    chartDataResistance3: {
+      labels: Array,
+      datasets: [{
+        data: Array
+      }]
+    },
+    chartDataResistance4: {
       labels: Array,
       datasets: [{
         data: Array
@@ -304,6 +335,10 @@ export default {
       const response = await axios.get('http://127.0.0.1:5000/positive_cases')
       return response.data
     },
+    async fetchResistance() {
+      const response = await axios.get('http://127.0.0.1:5000/resistance')
+      return response.data
+    },
     async getDeathData() {
       let response = await this.fetchDeath()
       let chartData = {
@@ -332,6 +367,37 @@ export default {
         }]
       }
       this.chartDataCases = chartData
+    },
+    async getResistanceData() {
+      let response = await this.fetchResistance()
+      let chartData1 = {
+        labels: response[0]['methods'],
+        datasets: [{
+          data: response[0]['counts']
+        }]
+      }
+      let chartData2 = {
+        labels: response[1]['methods'],
+        datasets: [{
+          data: response[1]['counts']
+        }]
+      }
+      let chartData3 = {
+        labels: response[2]['methods'],
+        datasets: [{
+          data: response[2]['counts']
+        }]
+      }
+      let chartData4 = {
+        labels: response[3]['methods'],
+        datasets: [{
+          data: response[3]['counts']
+        }]
+      }
+      this.chartDataResistance1 = chartData1
+      this.chartDataResistance2 = chartData2
+      this.chartDataResistance3 = chartData3
+      this.chartDataResistance4 = chartData4
     },
     async forceRerender() {
       this.renderComponent = false;
