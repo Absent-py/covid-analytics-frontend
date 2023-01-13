@@ -72,11 +72,15 @@
     <BarChart :chartData="chartDataResistance3"></BarChart>
     <BarChart :chartData="chartDataResistance4"></BarChart>
   </section>
+  <section class="section">
+  <v-btn @click="getGeoData">Geo statistics</v-btn>
+  <BubbleChart :chartData="chartDataGeo"></BubbleChart>
+  </section>
 </template>
 
 <script>
 import axios from "axios";
-import {BarChart} from 'vue-chart-3'
+import {BarChart, BubbleChart} from 'vue-chart-3'
 import {Chart, registerables} from "chart.js"
 
 Chart.register(...registerables)
@@ -85,9 +89,37 @@ export default {
   name: 'Home',
   components: {
     BarChart,
+    BubbleChart
   },
   data: () => ({
     renderComponent: true,
+    test: {
+      datasets: [{
+        data: [
+          {
+            x: 10,
+            y: 20,
+            r: 5,
+          },
+          {
+            x: 23,
+            y: 13,
+            r: 14,
+          },
+          {
+            x: 54,
+            y: 23,
+            r: 1,
+          },
+        ],
+        backgroundColor: 'rgb(255, 99, 132)'
+      }]
+    },
+    chartDataGeo: {
+      datasets: [{
+        data: Array
+      }]
+    },
     chartDataDeath: {
       labels: Array,
       datasets: [{
@@ -339,12 +371,17 @@ export default {
       const response = await axios.get('http://127.0.0.1:5000/resistance')
       return response.data
     },
+    async fetchGeo() {
+      const response = await axios.get('http://127.0.0.1:5000/geo')
+      return response.data
+    },
     async getDeathData() {
       let response = await this.fetchDeath()
       let chartData = {
         labels: response,
         datasets: [{
-          data: response
+          data: response,
+          backgroundColor: 'rgba(255, 99, 132, 0.2)'
         }]
       }
       this.chartDataDeath = chartData
@@ -353,7 +390,8 @@ export default {
       chartData = {
         labels: response,
         datasets: [{
-          data: response
+          data: response,
+          backgroundColor: 'rgba(255, 99, 132, 0.2)'
         }]
       }
       this.chartDataDeathDiff = chartData
@@ -363,7 +401,8 @@ export default {
       let chartData = {
         labels: response,
         datasets: [{
-          data: response
+          data: response,
+          backgroundColor: 'rgba(255, 99, 132, 0.2)'
         }]
       }
       this.chartDataCases = chartData
@@ -373,31 +412,46 @@ export default {
       let chartData1 = {
         labels: response[0]['methods'],
         datasets: [{
-          data: response[0]['counts']
+          data: response[0]['counts'],
+          backgroundColor: 'rgba(255, 99, 132, 0.2)'
         }]
       }
       let chartData2 = {
         labels: response[1]['methods'],
         datasets: [{
-          data: response[1]['counts']
+          data: response[1]['counts'],
+          backgroundColor: 'rgba(255, 99, 132, 0.2)'
         }]
       }
       let chartData3 = {
         labels: response[2]['methods'],
         datasets: [{
-          data: response[2]['counts']
+          data: response[2]['counts'],
+          backgroundColor: 'rgba(255, 99, 132, 0.2)'
         }]
       }
       let chartData4 = {
         labels: response[3]['methods'],
         datasets: [{
-          data: response[3]['counts']
+          data: response[3]['counts'],
+          backgroundColor: 'rgba(255, 99, 132, 0.2)'
         }]
       }
       this.chartDataResistance1 = chartData1
       this.chartDataResistance2 = chartData2
       this.chartDataResistance3 = chartData3
       this.chartDataResistance4 = chartData4
+    },
+    async getGeoData() {
+      let response = await this.fetchGeo()
+      let chartData = {
+        datasets: [{
+          data: response,
+          backgroundColor: 'rgba(255, 99, 132, 0.2)'
+        }]
+      }
+      this.chartDataGeo = chartData
+      console.log(response)
     },
     async forceRerender() {
       this.renderComponent = false;
