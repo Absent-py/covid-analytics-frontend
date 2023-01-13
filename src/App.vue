@@ -27,7 +27,7 @@
               ></v-textarea>
             </v-col>
           </v-row>
-          <v-btn @click="fetchMe">
+          <v-btn @click="fetchPreview">
             <h3>Preview</h3>
           </v-btn>
         </v-container>
@@ -57,28 +57,37 @@
     </v-container>
   </section>
   <section class="section">
-    <bar_chart :chartData="testData"></bar_chart>
+    <v-btn @click="getChartData">Death statistics</v-btn>
+    <BarChart :chartData="chartDataDeath"></BarChart>
+    <BarChart :chartData="chartDataDeathDiff"></BarChart>
   </section>
 </template>
 
 <script>
-import bar_chart from '/src/components/bar_chart.vue'
 import axios from "axios";
+import {BarChart} from 'vue-chart-3'
+import {Chart, registerables} from "chart.js"
+
+Chart.register(...registerables)
 
 export default {
   name: 'Home',
   components: {
-    bar_chart,
+    BarChart,
   },
   data: () => ({
-    testData: {
-      labels: ['Paris', 'Nîmes', 'Toulon', 'Perpignan', 'Autre'],
-      datasets: [
-        {
-          data: [30, 40, 60, 70, 5],
-          backgroundColor: ['#77CEFF', '#0079AF', '#123E6B', '#97B0C4', '#A5C8ED'],
-        }
-      ]
+    renderComponent: true,
+    chartDataDeath: {
+      labels: Array,
+      datasets: [{
+        data: Array
+      }]
+    },
+    chartDataDeathDiff: {
+      labels: Array,
+      datasets: [{
+        data: Array
+      }]
     },
     selectedTable: 'Activity',
     tables: [
@@ -250,7 +259,7 @@ export default {
       }
       return object
     },
-    async fetchMe() {
+    async fetchPreview() {
       const response = await axios.post('http://127.0.0.1:5000/execute',
           {'query': this.query},
           {
@@ -272,6 +281,39 @@ export default {
         parsed = this.parseResponse(response.data.data, this.headersActivity)
       }
       this.response = parsed
+    },
+    async fetchDeath() {
+      const response = await axios.get('http://127.0.0.1:5000/death')
+      return response.data
+    },
+    async fetchDeathDiff() {
+      const response = await axios.get('http://127.0.0.1:5000/death/diff')
+      return response.data
+    },
+    async getChartData() {
+      console.log('working')
+      let response = await this.fetchDeath()
+      let chartData = {
+        labels: response,
+        datasets: [{
+          data: response
+        }]
+      }
+      this.chartDataDeath = chartData
+
+      response = await this.fetchDeathDiff()
+      chartData = {
+        labels: response,
+        datasets: [{
+          data: response
+        }]
+      }
+      this.chartDataDeathDiff = chartData
+    },
+    async forceRerender() {
+      this.renderComponent = false;
+      await this.$nextTick();
+      this.renderComponent = true;
     }
   }
 }
